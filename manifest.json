@@ -1,0 +1,36 @@
+{
+	"AppDescription": {
+		"en": "Shared gym music playlists via Spotify"
+	},
+	"AppIcon": {
+		"36x18": "icon.png"
+	},
+	"AppName": {
+		"en": "Movement Gym Music"
+	},
+	"BundleIdentifier": "spotify-member-music",
+	"BundleType": "Application",
+	"BundleVersion": "0.1",
+	"DefaultTabs": [
+		{
+			"arguments": "index",
+			"title": {
+				"en": "Home"
+			}
+		}
+	],
+	"Dependencies": {
+	  "api": "0.2.3",
+	  "util": "0.1.0",
+	  "resources": "0.2.2"
+  },
+	"RequiredInterface": 1,
+	"RequiredPermissions": [
+	    "http://*.movementminneapolis.com",	    
+	    "http://code.jquery.com"
+	],
+	"SupportedLanguages": [
+		"en"
+	],
+	"VendorIdentifier": "co.mager"
+}
