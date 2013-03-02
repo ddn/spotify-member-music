@@ -1,5 +1,5 @@
 # Spotify Member Muic
-![Spotify Apps Tutorial home screen](https://github.com/spotify/apps-tutorial/raw/master/img/screenshot.png)
+![Spotify Apps Tutorial home screen](http://www.dellanave.com/skitch//Spotify-20130301-205346.png)
 
 This Spotify App pulls a list of playlists via a REST request, then randomly cycles through them playing a song from each.
 
