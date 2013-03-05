@@ -22,152 +22,140 @@
     </div>
 
     <script type="script/snippet" data-container="js">
-        var sp = getSpotifyApi();
-        var models = sp.require('$api/models');
-        var views = sp.require("$api/views");
-
-		var previous_track_player = "";
-		var previous_track_name = "";
-
-	 	var single_track_player = new views.Player();
-
-	 	var previous_url_id = false;
-
-		    var playlist_view = new models.Playlist();
-		    var list = new views.List(playlist_view);
-		    var element = document.getElementById('playlist');
-			while (element.firstChild) {
-			  element.removeChild(element.firstChild);
-			}
-	        document.getElementById('playlist').appendChild(list.node);
-
-function substr(str, start, length) {
-	return str.substring(start, length > 0 ? start + length : str.length + length);
-}
-
-        function play_song() {
-
-		var urls = {};
-		$.ajax({
-		  type: 'GET',
-		  url: 'http://www.movementminneapolis.com/widget-feed-1/',
-		  data: { 'widgetfeed' : 'spotify_playlists' },
-		  dataType: 'json',
-		  async: false,
-		  success: function(data) {
-		    urls = data;
-		  },
-		  error: function() {
-		    alert('Error loading spotify playlist url data' + id);
-		  }
-		});
-
-		var urlcount = urls.length;
-
-		var members = "";
-		for(var j=0; j<urlcount; j++) {
-			 var name = urls[j].name;
-			members = members+name+", ";
-		}
-		var members=members.substr(0,members.length-2)
-    	$('#users_playing').html("<p> Playing songs from playlists of: "+members+"</p>");
-
-
-		i=Math.floor(Math.random()*urlcount);
-		if(urlcount > 1) {
-		while(i == previous_url_id) {
-			console.log("re-randomizing to avoid duplicate "+i);
-			var i=Math.floor(Math.random()*urlcount);
-		}
-	}
-		console.log("selected: "+i);
-
-	 	var url = urls[i];
-
-     	$('#previous_track_name').html("<p>"+previous_track_name+"</p>");
-     	$('#previous_track_player').html("<p>"+previous_track_player+"</p>");
-     	$('#current_track_player').html("<p>"+url.name+"</p>");
-
-
-	        var playlist_url = url.uri;
-//			var playlistHTML = document.getElementById('playlist');
-
-
-
-
-	        var pl = models.Playlist.fromURI(playlist_url, function(playlist) {
-            var fragment = document.createDocumentFragment();
-
-            var tracks = playlist.tracks.length;
-			var t = Math.floor(Math.random()*tracks)
-
-     	 	$('#current-track-name').html("<strong>"+playlist.tracks[t].name+"</strong>");
-
-	  console.log("Playing URI: "+playlist.tracks[t].uri);
-
-//            var single_track = models.Track.fromURI(playlist.tracks[t].uri);
-var single_track = models.Track.fromURI(playlist.tracks[t].uri, function(track) {
-    if(single_track) {
-	    console.log("Track loaded", single_track.name);
-	} else {
-	    console.log("failed to load ", playlist.tracks[t].uri);
-		play_song();
-	}
-});
-
-
-
-			playlist_view.add(single_track);
-
-                 
-            var single_track_playlist = new models.Playlist();
-            single_track_playlist.add(single_track);
-
-            single_track_player.track = null; // Don't play the track right away
-            single_track_player.context = single_track_playlist;
-
-            var single_track_player_HTML = document.getElementById('single-track-player');
-            single_track_player_HTML.appendChild(single_track_player.node);
-
-            single_track_player.playing = 1;
-                       
-            previous_track_player = url.name;
-	        previous_track_name = playlist.tracks[t].name;
-        });
-
-	        previous_url_id = i;
- 	   }
-
-    	play_song();
-
-
-
-
-		models.player.observe(models.EVENT.CHANGE, function(event) {
-			//console.log("Something changed! event: "+JSON.stringify(event,null,4));
-			// console.log(event.data.playstate);
-			
-			if(event.data.playstate == true && event.data.contextclear == false && event.data.curtrack == true) {
-				play_song();
-			} else if(event.data.playstate == true && event.data.contextclear == false && event.data.curtrack == false) {
-				 single_track_player.playing = false;
-				 console.log('stopped on all false');
-			}
-
-			
-		});
-
-function ajax_response(REQ) {
-  document.getElementById("ResponseDiv").innerHTML=REQ.responseText;
- }
-        function playOrPause() {
-            single_track_player.playing = !(single_track_player.playing);
-            if (single_track_player.playing) {
-                playerButton.value = 'Pause';
-            } else {
-                playerButton.value = 'Play';
-            }
+        function substr(str, start, length) {
+            return str.substring(start, length > 0 ? start + length : str.length + length);
         }
 
+
+        $(document).ready(function() {
+            var sp = getSpotifyApi(),
+                models = sp.require('$api/models'),
+                views = sp.require("$api/views"),
+                single_track_player = new views.Player(),
+                playlist_view = new models.Playlist(),
+                previous_track_player = "",
+                previous_track_name = "",
+                previous_url_id = false,
+                list = new views.List(playlist_view),
+                element = document.getElementById('playlist');
+                
+                function play_song() {
+                    var urls = [],
+                        urlcount = 0,
+                        url = '',
+                        members = '',
+                        i = 0,
+                        playlist_url = '';
+
+                    $.ajax({
+                        type: 'GET',
+                        url: 'http://www.movementminneapolis.com/widget-feed-1/',
+                        data: { 'widgetfeed' : 'spotify_playlists' },
+                        dataType: 'json',
+                        async: false,
+                        success: function(data) {
+                            urls = data;
+                        },
+                        error: function() {
+                            alert('Error loading spotify playlist url data' + id);
+                        }
+                    });
+
+                    urlcount = urls.length;
+
+                    for(var j=0; j < urlcount; j++) {
+                        var name = urls[j].name;
+                        members = members + name + ", ";
+                    }
+
+                    members = members.substr(0, members.length - 2);
+
+                    $('#users_playing').html("<p> Playing songs from playlists of: "+members+"</p>");
+
+                    i = Math.floor(Math.random()*urlcount);
+
+                    if(urlcount > 1) {
+                        while(i == previous_url_id) {
+                            console.log("re-randomizing to avoid duplicates " + i);
+                            i = Math.floor(Math.random()*urlcount);
+                        }
+                    }
+
+                    url = urls[i];
+
+                    $('#previous_track_name').html("<p>"+previous_track_name+"</p>");
+                    $('#previous_track_player').html("<p>"+previous_track_player+"</p>");
+                    $('#current_track_player').html("<p>"+url.name+"</p>");
+
+                    playlist_url = url.uri;
+
+                    var pl = models.Playlist.fromURI(playlist_url, function(playlist) {
+                        var fragment = document.createDocumentFragment();
+
+                        var tracks = playlist.tracks.length;
+                        var t = Math.floor(Math.random()*tracks)
+
+                        $('#current-track-name').html("<strong>"+playlist.tracks[t].name+"</strong>");
+
+                        var single_track = models.Track.fromURI(playlist.tracks[t].uri, function(track) {
+                            if(single_track) {
+                                console.log("Track loaded", single_track.name);
+                                } else {
+                                console.log("failed to load ", playlist.tracks[t].uri);
+                                play_song();
+                            }
+                        });
+
+                        playlist_view.add(single_track);
+
+                        var single_track_playlist = new models.Playlist();
+                        single_track_playlist.add(single_track);
+
+                        single_track_player.track = null; // Don't play the track right away
+                        single_track_player.context = single_track_playlist;
+
+                        var single_track_player_HTML = document.getElementById('single-track-player');
+                        single_track_player_HTML.appendChild(single_track_player.node);
+
+                        single_track_player.playing = 1;
+
+                        previous_track_player = url.name;
+                        previous_track_name = playlist.tracks[t].name;
+                    });
+
+                    previous_url_id = i;
+                } // end function play_song()
+
+            while (element.firstChild) {
+                element.removeChild(element.firstChild);
+            }
+
+            $('#playlist').append(list.node);
+
+            play_song(playlist_view, single_track_player);
+
+            models.player.observe(models.EVENT.CHANGE, function(event) {
+                if(event.data.playstate == true && event.data.contextclear == false && event.data.curtrack == true) {
+                    play_song();
+                    } else if(event.data.playstate == true && event.data.contextclear == false && event.data.curtrack == false) {
+                    single_track_player.playing = false;
+                    console.log('stopped on all false');
+                }
+            });
+
+            function ajax_response(REQ) {
+                document.getElementById("ResponseDiv").innerHTML=REQ.responseText;
+            }
+
+            function playOrPause() {
+                single_track_player.playing = !(single_track_player.playing);
+                if (single_track_player.playing) {
+                    playerButton.value = 'Pause';
+                    } else {
+                    playerButton.value = 'Play';
+                }
+            }
+
+        });
     </script>
 </div>
