@@ -132,7 +132,7 @@
 
             $('#playlist').append(list.node);
 
-            play_song(playlist_view, single_track_player);
+            play_song();
 
             models.player.observe(models.EVENT.CHANGE, function(event) {
                 if(event.data.playstate == true && event.data.contextclear == false && event.data.curtrack == true) {
