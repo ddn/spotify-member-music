@@ -1,29 +1,32 @@
 <!DOCTYPE html>
     <head>
         <!-- Spotify CSS files -->
-        <link rel="stylesheet" type="text/css" href="sp://resources/css/eve.css">
-        <link rel="stylesheet" type="text/css" href="sp://resources/css/api.css">
-        <link rel="stylesheet" type="text/css" href="sp://resources/css/player.css">
-        <link rel="stylesheet" type="text/css" href="sp://resources/css/list.css">
-
-        <!-- Project CSS files -->
-        <link rel="stylesheet" type="text/css" href="css/main.css">
-        <link rel="stylesheet" type="text/css" href="css/github.css">
+            <link rel="stylesheet" type="text/css" href="sp://resources/css/eve.css">
+            <link rel="stylesheet" type="text/css" href="sp://resources/css/api.css">
+            <link rel="stylesheet" type="text/css" href="sp://resources/css/player.css">
+            <link rel="stylesheet" type="text/css" href="sp://resources/css/list.css">
+        <!-- Member Music CSS files -->
+            <link rel="stylesheet" type="text/css" href="/css/main.css">
     </head>
     <body>
         <div id="wrapper">
             <div id="index" class="section">
-                <h1>Movement Minneapolis Music App</h1>
-
-                <ul>
-                    <li><a href="spotify:app:spotify-member-music:app:member-music">Play music</a></li>
-                </ul>
-
+                <h1>Range of Music</h1>
+                <a href="#" class="button-start">Start</a>
+                <h2>Playing songs from these users:</h2>
+                <div id="users_playing"></div>
+                <h2>Current Track:</h2>
+                <div id="single-track-player"></div>
+                <div id="current-track-name"></div>
+                <div id="current_track_player"></div>
+                <h2>Previous Track:</h2>
+                <div id="previous_track_name"></div>
+                <div id="previous_track_player"></div>
+                <h2>Playlist:</h2>
+                <div id="playlist"></div>
             </div>
         </div>
-        <script src="/js/rainbow-custom.min.js"></script>
-        <script src="/js/tutorial.js"></script>
         <script src="/js/jquery.min.js"></script>
-
+        <script type="text/javascript" src="/js/main.js" data-container="js"></script>
     </body>
 </html>
