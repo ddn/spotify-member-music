@@ -20,7 +20,7 @@
 		}
 	],
 	"Dependencies": {
-	  "api": "0.2.3",
+	  "api": "0.2.2",
 	  "util": "0.1.0",
 	  "resources": "0.2.2"
   },
