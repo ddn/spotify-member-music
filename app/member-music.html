@@ -90,12 +90,13 @@
                     playlist_url = url.uri;
 
                     var pl = models.Playlist.fromURI(playlist_url, function(playlist) {
-                        var fragment = document.createDocumentFragment();
 
                         var tracks = playlist.tracks.length;
                         var t = Math.floor(Math.random()*tracks)
 
                         $('#current-track-name').html("<strong>"+playlist.tracks[t].name+"</strong>");
+
+                                console.log("Loading: ", playlist.tracks[t].uri);
 
                         var single_track = models.Track.fromURI(playlist.tracks[t].uri, function(track) {
                             if(single_track && single_track.availableForPlayback) {
