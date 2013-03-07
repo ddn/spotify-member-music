@@ -98,7 +98,7 @@
                         $('#current-track-name').html("<strong>"+playlist.tracks[t].name+"</strong>");
 
                         var single_track = models.Track.fromURI(playlist.tracks[t].uri, function(track) {
-                            if(single_track) {
+                            if(single_track && single_track.availableForPlayback) {
                                 console.log("Track loaded", single_track.name);
                                 } else {
                                 console.log("failed to load ", playlist.tracks[t].uri);
