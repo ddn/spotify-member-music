@@ -3,6 +3,8 @@ function substr(str, start, length) {
 }
 
 $(document).ready(function() {
+
+
     $('.button-start, .button-stop').on('click', function() {
         if ($(this).hasClass('button-start')) {
             playtime = true;
@@ -29,11 +31,14 @@ var sp = getSpotifyApi(),
     playlist_view = new models.Playlist(),
     previous_track_player = "",
     previous_track_name = "",
-    previous_url_id = false,
     list = new views.List(playlist_view),
     element = document.getElementById('playlist'),
     playtime = true;
     
+    var previous_url_id;
+    var previous_url_uid;
+    var previous_track_uri;
+
     function play_song() {
         if (!playtime) {
             console.log("it's not playtime");
@@ -74,25 +79,42 @@ var sp = getSpotifyApi(),
         i = Math.floor(Math.random()*urlcount);
 
         if(urlcount > 1) {
-            while(i == previous_url_id) {
-                console.log("re-randomizing to avoid duplicates " + i);
+            while(urls[i].uid == previous_url_uid) {
+                console.log("re-randomizing to avoid duplicates url " + i);
                 i = Math.floor(Math.random()*urlcount);
             }
         }
 
         url = urls[i];
+        playlist_url_uid = url.uid;
+        playlist_url = url.uri;
 
         $('#previous_track_name').html("<p>"+previous_track_name+"</p>");
         $('#previous_track_player').html("<p>"+previous_track_player+"</p>");
         $('#current_track_player').html("<p>"+url.name+"</p>");
 
-        playlist_url = url.uri;
+        
 
         var pl = models.Playlist.fromURI(playlist_url, function(playlist) {
-
             var tracks = playlist.tracks.length;
-            var t = Math.floor(Math.random()*tracks),
-                track = playlist.tracks[t];
+
+            if(urlcount > 1 && tracks > 1) {
+                var t = Math.floor(Math.random()*tracks);
+                while(playlist.tracks[t].uri == previous_track_uri) {
+                    console.log("re-randomizing track to avoid duplicates " + i);
+                    t = Math.floor(Math.random()*tracks);
+                }
+            } else if(tracks > 1) {
+                var t = Math.floor(Math.random()*tracks);
+                while(playlist.tracks[t].uri == previous_track_uri) {
+                    console.log("re-randomizing track to avoid duplicates " + i);
+                    t = Math.floor(Math.random()*tracks);
+                }
+            } else {
+                var t = Math.floor(Math.random()*tracks);
+            }
+            
+            track = playlist.tracks[t];
 
             console.log("Loading: ", track);
             
@@ -122,9 +144,12 @@ var sp = getSpotifyApi(),
 
             previous_track_player = url.name;
             previous_track_name = playlist.tracks[t].name;
+            previous_track_id = t;
+            previous_track_uri = track.uri;
         });
 
         previous_url_id = i;
+        previous_url_uid = playlist_url_uid;
     } // end function play_song()
 
 while (element.firstChild) {
