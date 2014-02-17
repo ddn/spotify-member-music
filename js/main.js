@@ -39,6 +39,8 @@ var sp = getSpotifyApi(),
     var previous_url_uid;
     var previous_track_uri;
 
+    var previous_tracks = [ ];
+
     function play_song() {
         if (!playtime) {
             console.log("it's not playtime");
@@ -95,19 +97,24 @@ var sp = getSpotifyApi(),
 
         
 
-        var pl = models.Playlist.fromURI(playlist_url, function(playlist) {
+            var pl = models.Playlist.fromURI(playlist_url, function(playlist) {
             var tracks = playlist.tracks.length;
+
+           // console.log('previous tracks'+previous_tracks);
 
             if(urlcount > 1 && tracks > 1) {
                 var t = Math.floor(Math.random()*tracks);
-                while(playlist.tracks[t].uri == previous_track_uri) {
-                    console.log("re-randomizing track to avoid duplicates " + i);
+//                while(playlist.tracks[t].uri == previous_track_uri) {
+                 while(inArray(playlist.tracks[t].uri,previous_tracks)) {
+                    console.log("re-randomizing track to avoid duplicates " + i++);
                     t = Math.floor(Math.random()*tracks);
                 }
             } else if(tracks > 1) {
                 var t = Math.floor(Math.random()*tracks);
-                while(playlist.tracks[t].uri == previous_track_uri) {
-                    console.log("re-randomizing track to avoid duplicates " + i);
+//                while(playlist.tracks[t].uri == previous_track_uri) {
+//                console.log("in array"+inArray(playlist.tracks[t].uri,previous_tracks));
+                 while(inArray(playlist.tracks[t].uri,previous_tracks)) {
+                    console.log("re-randomizing track to avoid duplicates " + i++);
                     t = Math.floor(Math.random()*tracks);
                 }
             } else {
@@ -146,6 +153,12 @@ var sp = getSpotifyApi(),
             previous_track_name = playlist.tracks[t].name;
             previous_track_id = t;
             previous_track_uri = track.uri;
+            previous_tracks.push(track.uri);
+
+            if(previous_tracks.length > 10) {
+                console.log("shortening prev tracks");
+                previous_tracks.pop();
+            }
         });
 
         previous_url_id = i;
@@ -159,9 +172,16 @@ while (element.firstChild) {
 $('#playlist').append(list.node);
 
 models.player.observe(models.EVENT.CHANGE, function(event) {
+    console.log('something changed');
+    console.log(event);
     if(event.data.playstate == true && event.data.contextclear == false && event.data.curtrack == true) {
+        console.log('playstate true contextclear false curtrack true');
         play_song();
-        } else if(event.data.playstate == true && event.data.contextclear == false && event.data.curtrack == false) {
+    } else if(event.data.contextclear == true && event.data.curcontext == true && event.data.curtrack == true && event.data.playstate == true) {
+        console.log('do nothing all true ');
+    } else if(event.data.contextclear == false && event.data.curcontext == false && event.data.curtrack == false && event.data.playstate == true) {
+        console.log('do nothing all false except playstate');
+    } else if(event.data.playstate == true && event.data.contextclear == false && event.data.curtrack == false) {
         single_track_player.playing = false;
         console.log('stopped on all false');
     }
@@ -178,4 +198,12 @@ function playOrPause() {
         } else {
         playerButton.value = 'Play';
     }
+}
+
+function inArray(needle, haystack) {
+    var length = haystack.length;
+    for(var i = 0; i < length; i++) {
+        if(haystack[i] == needle) return true;
+    }
+    return false;
 }
