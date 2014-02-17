@@ -179,11 +179,13 @@ models.player.observe(models.EVENT.CHANGE, function(event) {
         play_song();
     } else if(event.data.contextclear == true && event.data.curcontext == true && event.data.curtrack == true && event.data.playstate == true) {
         console.log('do nothing all true ');
+    } else if(event.data.contextclear == false && event.data.curcontext == false && event.data.curtrack == false && event.data.playstate == false) {
+        console.log('do nothing all false');
     } else if(event.data.contextclear == false && event.data.curcontext == false && event.data.curtrack == false && event.data.playstate == true) {
         console.log('do nothing all false except playstate');
     } else if(event.data.playstate == true && event.data.contextclear == false && event.data.curtrack == false) {
-        single_track_player.playing = false;
-        console.log('stopped on all false');
+        // single_track_player.playing = false;
+        console.log('all false except playstate');
     }
 });
 
@@ -197,6 +199,7 @@ function playOrPause() {
         playerButton.value = 'Pause';
         } else {
         playerButton.value = 'Play';
+        single_track_player.playing = false;
     }
 }
 
