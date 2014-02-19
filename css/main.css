@@ -59,3 +59,7 @@ h2 {
     color: #550000;
     background: #bb0000;
 }
+
+.sp-list {
+    max-height: 300px;
+}

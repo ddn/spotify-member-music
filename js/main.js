@@ -155,7 +155,7 @@ var sp = getSpotifyApi(),
             previous_track_uri = track.uri;
             previous_tracks.push(track.uri);
 
-            if(previous_tracks.length > 10) {
+            if(previous_tracks.length > 20) {
                 console.log("shortening prev tracks");
                 previous_tracks.pop();
             }
